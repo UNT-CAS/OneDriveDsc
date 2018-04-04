@@ -128,10 +128,50 @@ Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDr
 
 # Example
 
+## Via [Datum](https://github.com/gaelcolas/Datum) YAML
+
+```yaml
+xOneDrive
+  AllowTenantList:
+    - UNT CAS
+  DehydrateSyncedTeamSites: Present
+  FilesOnDemandEnabled: Present
+  PreventNetworkTrafficPreUserSignIn: Present
+  SilentAccountConfig: Present
+```
+
+## Via Powershell
+
+```powershell
+Node 'localhost' {
+  xOneDrive `
+    -AllowTenantList @('UNT CAS') `
+    -DehydrateSyncedTeamSites 'Present' `
+    -FilesOnDemandEnabled 'Present' `
+    -PreventNetworkTrafficPreUserSignIn 'Present' `
+    -SilentAccountConfig 'Present'
+}
+```
+
+## Via Powershell Splatting
+
+```powershell
+Node 'localhost' {
+  $xOneDrive = @{
+    AllowTenantList = @('UNT CAS')
+    DehydrateSyncedTeamSites = 'Present'
+    FilesOnDemandEnabled = 'Present'
+    PreventNetworkTrafficPreUserSignIn = 'Present'
+    SilentAccountConfig = 'Present'
+  }
+  xOneDrive @xOneDrive
+}
+```
+
 ## Set AllowTenantList to Absent
 
 ```powershell
-OneDrive -AllowTenantList @()
+xOneDrive -AllowTenantList @()
 ```
 
 # Notes
