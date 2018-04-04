@@ -16,7 +16,7 @@ To block specific organizations instead, use "Block syncing OneDrive accounts fo
 
 This setting will take priority over the policy "Block syncing OneDrive accounts for specific organizations." Do not enable both policies at the same time.
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::AllowTenantList
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::AllowTenantList)
 
 ## `BlockTenantList`
 
@@ -30,7 +30,7 @@ To specify a list of allowed organizations instead, use "Allow syncing OneDrive 
 
 This setting will NOT work if you have the policy "Allow syncing OneDrive accounts for only specific organizations." enabled. Do not enable both policies at the same time.
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::BlockTenantList
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::BlockTenantList)
 
 ## `FilesOnDemandEnabled`
 
@@ -42,7 +42,7 @@ If you disable this setting, OneDrive Files On-Demand will be explicitly disable
 
 If you do not configure this setting, OneDrive Files On-Demand can be either turned on or off by a user. 
 
-Supported on: At least Windows Server, Windows 10 Version 1709. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::FilesOnDemandEnabled
+Supported on: At least Windows Server, Windows 10 Version 1709. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::FilesOnDemandEnabled)
 
 ## `DehydrateSyncedTeamSites`
 
@@ -54,7 +54,7 @@ If you enable this policy, teamsites that were syncing before OneDrive Files On-
 
 This is ideal for cases where you want to conserve bandwidth and have many PCs syncing the same TeamSite. 
 
-Supported on: At least Windows Server, Windows 10 Version 1709. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::DehydrateSyncedTeamSites
+Supported on: At least Windows Server, Windows 10 Version 1709. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::DehydrateSyncedTeamSites)
 
 ## `PreventNetworkTrafficPreUserSignIn`
 
@@ -66,7 +66,7 @@ If this setting is not enabled, the OneDrive sync client will start automaticall
 
 If you enable or disable this setting, do not return the setting to Not Configured. Doing so will not change the configuration and the last configured setting will remain in effect.
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::PreventNetworkTrafficPreUserSignIn
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::PreventNetworkTrafficPreUserSignIn)
 
 ## `RemoteAccess32`
 
@@ -78,7 +78,7 @@ If you disable this setting, users can use the fetch feature.
 
 This setting is for computers running 32-bit versions of Windows. 
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::RemoteAccess32
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::RemoteAccess32)
 
 ## `RemoteAccess64`
 
@@ -90,7 +90,7 @@ If you disable this setting, users can use the fetch feature.
 
 This setting is for computers running 64-bit versions of Windows. 
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::RemoteAccess64
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::RemoteAccess64)
 
 ## `AutomaticUploadBandwidthPercentage`
 
@@ -102,7 +102,7 @@ If you disable this setting, computers will allow the users to determine how muc
 
 If you enable or disable this setting, do not return the setting to Not Configured. Doing so will not change the configuration and the last configured setting will remain in effect.
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::AutomaticUploadBandwidthPercentage
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::AutomaticUploadBandwidthPercentage)
 
 ## `SilentAccountConfig`
 
@@ -118,13 +118,13 @@ If you disable this setting, OneDrive will not attempt to automatically sign in 
 
 Other settings which are useful with SilentAccountConfig include DiskSpaceCheckThresholdMB, and DefaultRootDir. 
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::SilentAccountConfig
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::SilentAccountConfig)
 
 ## `DiskSpaceCheckThresholdMB`
 
 This setting is used in conjunction with SilentAccountConfig. Any user who has a OneDrive for Business that is larger than the specified threshold (in MB) will be prompted to choose the folders they would like to sync before OneDrive downloads the files. 
 
-Supported on: At least Windows 7. More Info: https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::DiskSpaceCheckThresholdMB
+Supported on: At least Windows 7. [More Info...](https://getadmx.com/?Category=OneDrive&Policy=Microsoft.Policies.OneDriveNGSC::DiskSpaceCheckThresholdMB)
 
 # Example
 
