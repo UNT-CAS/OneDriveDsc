@@ -338,7 +338,7 @@ Configuration OneDrive {
                 if ($Threshold.Name -as [guid]) {
                     Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Name should be a GUID: $($Threshold.Name)"
                 }
-                if ($Threshold.Value -isnot [int]) {
+                if (-not ($Threshold.Value -as [int])) {
                     Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Value must be of type [int]: $($Threshold.Name): [$($Threshold.Value.GetType().FullName)] $($Threshold.Value)"
                 }
                 if (
@@ -346,6 +346,9 @@ Configuration OneDrive {
                     [int]$Threshold.Value -gt 4294967295
                 ) {
                     Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Value Out of Range (0 to 4294967295 inclusive): $($Threshold.Name): $($Threshold.Value)"
+                }
+                if (($Threshold.Value -as [int]) -ne $Threshold.Value) {
+                    Write-Warning "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Changed Value of '$($Threshold.Name)' from '[$($Threshold.Value.GetType().FullName)] $($Threshold.Value)' to '[$(($Threshold.Value -as [int]).GetType().FullName)] $(($Threshold.Value -as [int]))'"
                 }
 
                 $i++
