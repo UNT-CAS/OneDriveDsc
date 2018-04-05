@@ -12,6 +12,7 @@ This setting lets you prevent users from easily uploading files to other organiz
 **Supported on:** At least Windows 7.
 
 **Expected Value `[string[]]`:**
+
 | Setting | Description |
 |--|--|
 | **`@('My Tenant', ...)`** | This will set `Ensure = 'Present'`, and OneDrive will allow all of the tenant IDs in this list. |
@@ -26,6 +27,7 @@ This setting lets you prevent users from easily uploading files to another organ
 **Supported on:** At least Windows 7.
 
 **Expected Value `[string[]]`:**
+
 | Setting | Description |
 |--|--|
 | **`@('My Tenant', ...)`** | This will set `Ensure = 'Present'`, and OneDrive will block all of the tenant IDs in this list. |
@@ -40,6 +42,7 @@ This setting allows you to explicitly control whether OneDrive [Files On-Demand]
 **Supported on:** At least Windows Server, Windows 10 Version 1709.
 
 **Expected Value `[string]`:**
+
 | Setting | Description |
 |--|--|
 | **`Present`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -55,6 +58,7 @@ This policy enables you to migrate previously downloaded teamsite content to be 
 **Supported on:** At least Windows Server, Windows 10 Version 1709.
 
 **Expected Value `[string]`:**
+
 | Setting | Description |
 |--|--|
 | **`Present`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -69,6 +73,7 @@ Enable this setting to prevent the OneDrive sync client (OneDrive.exe) from gene
 **Supported on:** At least Windows 7.
 
 **Expected Value `[string]`:**
+
 | Setting | Description |
 |--|--|
 | **`Present`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -86,6 +91,7 @@ The fetch feature allows your users to go to OneDrive.com, select a Windows comp
 **Supported on:** At least Windows 7.
 
 **Expected Value `[string]`:**
+
 | Setting | Description |
 |--|--|
 | **`Present`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -103,6 +109,7 @@ The fetch feature allows your users to go to OneDrive.com, select a Windows comp
 **Supported on:** At least Windows 7.
 
 **Expected Value `[string]`:**
+
 | Setting | Description |
 |--|--|
 | **`Present`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -124,6 +131,7 @@ Second, for any long running upload, sync will keep optimizing the upload speed 
 **Supported on:** At least Windows 7.
 
 **Expected Value `[int]`:**
+
 | Setting | Description |
 |--|--|
 | **`10` - `99`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -138,6 +146,7 @@ This setting allows you to configure OneDrive silently using the primary Windows
 **Supported on:** At least Windows 7.
 
 **Expected Value `[string]`:**
+
 | Setting | Description |
 |--|--|
 | **`Present`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. |
@@ -153,6 +162,7 @@ Any user who has a OneDrive for Business that is larger than the specified thres
 **Supported on:** At least Windows 7.
 
 **Expected Value `[hashtable]`:**
+
 | Setting | Description |
 |--|--|
 | **`@{TenantGUID = 1234; ...}`** | This will set `Ensure = 'Present'`, and OneDrive will force this setting to be applied. <ul><li>**`TenantGUID`**: Tenant guid must be a `[string]` in proper `[guid]` form; such as: `'d84f007b-51f6-4470-a50b-3ec6b2351977'`</li><li>**`1234`**: Is an `[int]` representing the threshold in MB. Valid values are from `0` to `4294967295` MB (inclusive).</li></ul> |
