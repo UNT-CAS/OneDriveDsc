@@ -1,10 +1,16 @@
 [CmdletBinding()]
 param(
-    [string] $thisModuleName = 'OneDrive'
+    [Parameter()]
+    [string]
+    $thisModuleName = 'OneDrive'
     ,
-    [string] $DSCModulePath  = "${SystemRoot}\System32\WindowsPowerShell\v1.0\Modules"
+    [Parameter()]
+    [string]
+    $DSCModulePath  = "${SystemRoot}\System32\WindowsPowerShell\v1.0\Modules"
     ,
-    [bool]   $CleanUp        = $true
+    [Parameter()]
+    [bool]
+    $CleanUp        = $true
 )
 
 $ParentModulePath = "${env:ProgramFiles}\WindowsPowerShell\Modules\${thisModuleName}"
@@ -15,14 +21,16 @@ $PSScriptRootParent = $(Split-Path $PSScriptRoot -Parent)
 $Manifest = & "${PSScriptRootParent}\.Build.ps1"
 Remove-Module $thisModuleName -ErrorAction 'SilentlyContinue'
 
-function Invoke-PesterTestCleaup {
+function Invoke-PesterTestCleaup
+{
     Invoke-DscCleanup
 
     Remove-Item -LiteralPath "${DSCModulePath}\${thisModuleName}" -Force
     $env:PSModulePath = $script:PSModulePathORIG
 }
 
-function Invoke-DscCleanup {
+function Invoke-DscCleanup
+{
     #Remove all mof files (pending,current,backup,MetaConfig.mof,caches,etc)
     Remove-Item 'C:\windows\system32\Configuration\*.mof*' -Force -ErrorAction 'Ignore'
     #Kill the LCM/DSC processes
@@ -35,13 +43,15 @@ Describe $thisModuleName {
 
 
     Context 'Script Analyzer' {
-        if (-not (Get-Command 'Invoke-ScriptAnalyzer' -ErrorAction 'SilentlyContinue')) {
+        if (-not (Get-Command 'Invoke-ScriptAnalyzer' -ErrorAction 'SilentlyContinue'))
+        {
             Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.11.0 -Force
         }
 
         $ScriptAnalyzerRules = Get-ScriptAnalyzerRule | Where-Object {$_.SourceName -eq 'PSDSC'}
 
-        foreach ($Rule in $ScriptAnalyzerRules) {
+        foreach ($Rule in $ScriptAnalyzerRules)
+        {
             It "Should not return any violation for the rule : $($Rule.RuleName)" {
                 Invoke-ScriptAnalyzer -Path "${PSScriptRootParent}\${thisModuleName}\${thisModuleName}.schema.psm1" -IncludeRule $Rule.RuleName | Should BeNullOrEmpty
             }
@@ -78,8 +88,10 @@ Describe $thisModuleName {
 
 
 
-    foreach ($example in (Get-ChildItem "${PSScriptRootParent}\Examples").FullName) {
+    foreach ($example in (Get-ChildItem "${PSScriptRootParent}\Examples").FullName)
+    {
         Invoke-DscCleanup
+
         Context "Configuration: ${example}" {
             . $example
 
@@ -91,32 +103,11 @@ Describe $thisModuleName {
                 Demo_Configuration | Should BeOfType 'System.IO.FileInfo'
             }
 
-            while (-not ($tested = Test-DscConfiguration "${PSScriptRootParent}\Demo_Configuration" -ErrorAction 'Ignore')) {
-                Write-Host "`tWaiting for DSC to become available ..." -ForegroundColor 'Gray'
-                Start-Sleep -Seconds 1
-            }
-            It 'Test Configuration' {
-                { Test-DscConfiguration "${PSScriptRootParent}\Demo_Configuration" -ErrorAction 'Stop' } | Should Not Throw
-            }
-
-            It 'Test Configuration Type' {
-                Write-Verbose 'If this test fails, it is likely not our fault. Assuming the prev test passed.'
-                $tested | Should BeOfType 'System.Management.Automation.PSCustomObject'
-            }
-
-            It 'Test Configuration In Desired State: False' {
-                # We haven't applied the Configuration yet, so this should be false.
-                $tested.InDesiredState | Should Be $FALSE
-            }
-
             It 'Apply Configuration' {
-                { Start-DscConfiguration '.\Demo_Configuration' -Wait -Force -ErrorAction 'Stop' } | Should Not Throw
+                { Start-DscConfiguration "${PSScriptRootParent}\Demo_Configuration" -Wait -Force -ErrorAction 'Stop' } | Should Not Throw
             }
 
-            while (-not ($tested = Test-DscConfiguration "${PSScriptRootParent}\Demo_Configuration" -ErrorAction 'Ignore')) {
-                Write-Host "`tWaiting for DSC to become available ..." -ForegroundColor 'Gray'
-                Start-Sleep -Seconds 1
-            }
+            $tested = Test-DscConfiguration "${PSScriptRootParent}\Demo_Configuration" -ErrorAction 'Ignore'
             It 'Test Configuration' {
                 { Test-DscConfiguration "${PSScriptRootParent}\Demo_Configuration" -ErrorAction 'Stop' } | Should Not Throw
             }
@@ -131,6 +122,7 @@ Describe $thisModuleName {
     }
 }
 
-if ($CleanUp.IsPresent) {
+if ($CleanUp.IsPresent)
+{
     Invoke-PesterTestCleaup
 }

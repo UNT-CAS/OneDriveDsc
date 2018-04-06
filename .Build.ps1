@@ -1,3 +1,7 @@
+<#
+    .SYNOPSIS
+        Prepare this machine; *installing* this module in a location accessible by DSC.
+#>
 param(
     [string] $thisModuleName = 'OneDrive'
 )
