@@ -1,0 +1,10 @@
+{
+    "ModuleName": "OneDriveDsc",
+    "ModuleVersion":  "0.1",
+    "ResourceName": "OneDrive",
+    "Author":  "Raymond Piller",
+    "CompanyName":  "Computing for Arts & Sciences, University of North Texas",
+    "Copyright":  "(c) {0} University of North Texas. All rights reserved.",
+    "PowerShellVersion":  "5.0",
+    "HelpInfoURI":  "https://github.com/UNT-CAS/OneDriveDsc"
+}
