@@ -6,6 +6,10 @@ param(
     ,
     [Parameter()]
     [string]
+    $Examples        = $(if ($env:PesterExamples) { $env:PesterExamples } else { '*' })
+    ,
+    [Parameter()]
+    [string]
     $DSCModulePath  = "${SystemRoot}\System32\WindowsPowerShell\v1.0\Modules"
     ,
     [Parameter()]
@@ -88,7 +92,7 @@ Describe $thisModuleName {
 
 
 
-    foreach ($example in (Get-ChildItem "${PSScriptRootParent}\Examples").FullName)
+    foreach ($example in (Get-ChildItem "${PSScriptRootParent}\Examples\${Examples}").FullName)
     {
         Invoke-DscCleanup
 

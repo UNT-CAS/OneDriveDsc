@@ -135,6 +135,11 @@ Configuration OneDrive
 
     <#
         .SYNOPSIS
+            Create a DSC resource configuration based on passed parameters.
+        .DESCRIPTION
+            Create a DSC resource configuration based on passed parameters.
+        .PARAMETER ResourceName
+            
     #>
     function Get-DscSplattedResource
     {
@@ -173,7 +178,7 @@ Configuration OneDrive
             {
                 $PropertyStringBuilder.AppendLine("    $($Property.Name) = {") | Out-Null
                 $PropertyStringBuilder.AppendLine($Property.Value) | Out-Null
-                $PropertyStringBuilder.AppendLine("    };") | Out-Null
+                $PropertyStringBuilder.AppendLine('    };') | Out-Null
             }
             else
             {
@@ -212,7 +217,7 @@ Configuration OneDrive
 
         if ($NoInvoke)
         {
-            Write-Verbose "[OneDrive] Get-DscSplattedResource Returning: $($returnValue | Out-String)"
+            Write-Verbose "[OneDrive] Get-DscSplattedResource Returning StringBuilder"
             return [scriptblock]::Create($StringBuilder.ToString())
         }
         else
@@ -537,12 +542,14 @@ Configuration OneDrive
 
     if ($PSBoundParameters.Keys -contains 'DiskSpaceCheckThresholdMB')
     {
+        Write-Verbose "[OneDrive] Processing *DiskSpaceCheckThresholdMB* ..."
         if ($DiskSpaceCheckThresholdMB)
         {
             $i = 0
-            foreach ($Threshold in $DiskSpaceCheckThresholdMB)
+            foreach ($Threshold in $DiskSpaceCheckThresholdMB.GetEnumerator())
             {
-                if ($Threshold.Name -as [guid])
+                Write-Verbose "[OneDrive] *DiskSpaceCheckThresholdMBDiskSpaceCheckThresholdMB* Threshold: $($Threshold | ConvertTo-Json -Compress)"
+                if (-not ($Threshold.Name -as [guid]))
                 {
                     Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Name should be a GUID: $($Threshold.Name)"
                 }
@@ -564,6 +571,7 @@ Configuration OneDrive
                     Write-Warning "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Changed Value of '$($Threshold.Name)' from '[$($Threshold.Value.GetType().FullName)] $($Threshold.Value)' to '[$(($Threshold.Value -as [int]).GetType().FullName)] $(($Threshold.Value -as [int]))'"
                 }
 
+                Write-Verbose "[OneDrive] *DiskSpaceCheckThresholdMBDiskSpaceCheckThresholdMB* Threshold: Creating 'Registry' Resource ..."
                 $i++
                 Registry "Policy_OneDrive_DiskSpaceCheckThresholdMB_${i}"
                 {
@@ -587,6 +595,7 @@ Configuration OneDrive
         }
         else
         {
+            Write-Verbose "[OneDrive] *DiskSpaceCheckThresholdMB* Removing ..."
             $Remove_OneDriveRegKey = @{
                 InstanceName = 'Policy_OneDrive_DiskSpaceCheckThresholdMB'
                 RegKey       = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\OneDrive\DiskSpaceCheckThresholdMB'
