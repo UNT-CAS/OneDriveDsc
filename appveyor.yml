@@ -1,5 +1,5 @@
 image: WMF 5
 install:
-- ps: Install-Module -Name Pester
+- ps: Install-Module -Name Pester; Import-Module Pester
 build_script:
 - ps: Invoke-Pester
