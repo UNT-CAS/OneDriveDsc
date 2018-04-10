@@ -28,11 +28,11 @@
 param(
     [Parameter()]
     [int]
-    $Major = $([version](Get-Content "${PSScriptRoot}\.appveyor.yml" | Out-String | ConvertFrom-Yaml).version.Replace('.{build}', '')).Major
+    $Major = $([version](Get-Content "$(Split-Path $PSScriptRoot -Parent)\.appveyor.yml" | Out-String | ConvertFrom-Yaml).version.Replace('.{build}', '')).Major
     ,
     [Parameter()]
     [int]
-    $Minor = $([version](Get-Content "${PSScriptRoot}\.appveyor.yml" | Out-String | ConvertFrom-Yaml).version.Replace('.{build}', '')).Minor
+    $Minor = $([version](Get-Content "$(Split-Path $PSScriptRoot -Parent)\.appveyor.yml" | Out-String | ConvertFrom-Yaml).version.Replace('.{build}', '')).Minor
     ,
     [Parameter()]
     [int]
