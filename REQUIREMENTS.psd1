@@ -7,6 +7,7 @@
     'Prep'       = @{
         DependencyType = 'task'
         Target = '$PWD\.scripts\requirements.prep.ps1'
+        DependsOn = @('powershell-yaml')
     }
     'Pester'            = 'latest'  # Tested with: 4.3.1
     'powershell-yaml'   = 'latest'  # Tested with: 0.3.2
