@@ -32,5 +32,5 @@ test_script:
 
 
 deploy_script:
-- ps: Invoke-PSDeploy -Path '.\.deploy.ps1' -Force
+- ps: if ($env:APPVEYOR_REPO_TAG -eq 'true') { Invoke-PSDeploy -Path '.\.deploy.ps1' -Force }
 - ps: '& "${env:Temp}\Codecov\codecov.exe" -f .\.codecov.yml'

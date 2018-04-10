@@ -37,6 +37,7 @@ $script:ParentModulePath = $null
 $script:ResourceModulePath = $null
 $script:SystemModuleLocation = $null
 $script:DependsBootstrap = if ($Properties.SkipBootStrap) { $null } else { 'Bootstrap' }
+$script:VersionBuild = $null
 
 # Parameters:
 Properties {
@@ -59,6 +60,8 @@ Properties {
 
     $PSModulePath1 = $env:PSModulePath.Split(';')[1]
     $script:SystemModuleLocation = "${PSModulePath1}\${script:Manifest_ModuleName}"
+
+    $script:VersionBuild = if ($env:APPVEYOR_BUILD_NUMBER) { $env:APPVEYOR_BUILD_NUMBER } else { 0 }
 }
 
 # Start psake builds
@@ -98,6 +101,7 @@ Task SetupModule -Description "Prepare and Setup Module" -Depends $DependsBootst
 
     $script:Manifest.Path = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psd1"
     $script:Manifest.DscResourcesToExport = $script:Manifest_ResourceName
+    $script:Manifest.ModuleVersion = "$($script:Manifest.ModuleVersion).${script:VersionBuild}"
     New-ModuleManifest @script:Manifest
 
     $script:Manifest.Path = "${script:ResourceModulePath}\${script:Manifest_ResourceName}.psd1"
