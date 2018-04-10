@@ -1,3 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/l5q1xwec0htdufp9/branch/master?svg=true)](https://ci.appveyor.com/project/VertigoRay/onedrivedsc/branch/master)
+[![codecov](https://codecov.io/gh/UNT-CAS/OneDriveDsc/branch/master/graph/badge.svg)](https://codecov.io/gh/UNT-CAS/OneDriveDsc)
+
 Various DSC settings for the OneDrive sync client, especially for configuring settings specific to enterprise functionality in the client.
 
 Can apply ~both~ computer ~and user~ policies with this resource.
