@@ -16,11 +16,19 @@ Write-Verbose "[REQUIREMENTS Prep] SecurityProtocol NEW: $([System.Net.ServicePo
 
 
 
+# Set Version
+Write-Verbose "[REQUIREMENTS Prep] APPVEYOR_BUILD_VERSION OLD: ${env:APPVEYOR_BUILD_VERSION}"
+$Version = & "${PSScriptRoot}\version.ps1"
+Write-Verbose "[REQUIREMENTS Prep] Version: ${Version}"
+Write-Verbose "[REQUIREMENTS Prep] APPVEYOR_BUILD_VERSION NEW: ${env:APPVEYOR_BUILD_VERSION}"
+
+
+
 # Create Temp Directory
 $New_Item = @{
     ItemType = 'Directory'
-    Path     = "${PSScriptRoot}\.temp"
+    Path     = "$(Split-Path $PSScriptRoot -Parent)\.temp"
     Force    = $true
 }
 Write-Verbose "[REQUIREMENTS Prep] New-Item: $($New_Item | ConvertTo-Json -Compress)"
-New-Item @New_Item
+New-Item @New_Item | Out-Null

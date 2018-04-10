@@ -7,9 +7,12 @@
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 'latest'
 
+$PSScriptRootParent = Split-Path $PSScriptRoot -Parent
+
+
 
 $Move_Item = @{
-    LiteralPath     = "${PSScriptRoot}\CodeCovIo.psm1"
+    LiteralPath     = "${PSScriptRootParent}\.temp\CodeCovIo.psm1"
     Destination     = $env:Temp
     Force           = $true
 }
@@ -17,13 +20,15 @@ Write-Verbose "[REQUIREMENTS Codecov] Move-Item: $($Move_Item | ConvertTo-Json -
 Move-Item @Move_Item
 
 
+
 $Move_Item = @{
-    LiteralPath     = "${PSScriptRoot}\Codecov.zip"
+    LiteralPath     = "${PSScriptRootParent}\.temp\Codecov.zip"
     Destination     = $env:Temp
     Force           = $true
 }
 Write-Verbose "[REQUIREMENTS Codecov] Move-Item: $($Move_Item | ConvertTo-Json -Compress)"
 Move-Item @Move_Item
+
 
 
 $Expand_Archive = @{

@@ -4,6 +4,11 @@
     See `.appveyor.yml::install` for details on preparing the system to use PSDepend.
 #>
 @{
+    'Prep'       = @{
+        DependencyType = 'task'
+        Target = '$PWD\.scripts\requirements.prep.ps1'
+        DependsOn = @('Codecov.zip', 'CodeCovIo.psm1')
+    }
     'Pester'            = 'latest'  # Tested with: 4.3.1
     'powershell-yaml'   = 'latest'  # Tested with: 0.3.2
     'psake'             = 'latest'  # Tested with: 4.7.0
@@ -12,12 +17,12 @@
     'CodeCovIo.psm1' = @{
         DependencyType = 'FileDownload'
         Source = 'https://raw.githubusercontent.com/PowerShell/DscResource.Tests/491688867dc53894b92ca53520a18d145deb7760/DscResource.CodeCoverage/CodeCovIo.psm1'
-        Target = '$PWD/CodeCovIo.psm1'
+        Target = '$PWD\.temp/CodeCovIo.psm1'
     }
     'Codecov.zip'       = @{
         DependencyType = 'FileDownload'
         Source = 'https://github.com/codecov/codecov-exe/releases/download/1.0.3/Codecov.zip'
-        Target = '$PWD\Codecov.zip'
+        Target = '$PWD\.temp\Codecov.zip'
     }
     'Codecov'       = @{
         DependencyType = 'task'

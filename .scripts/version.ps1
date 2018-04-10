@@ -41,4 +41,11 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 'latest'
 
-return [version]('{0}.{1}.{2}' -f $Major, $Minor, $Build)
+
+$Version = [version]('{0}.{1}.{2}' -f $Major, $Minor, $Build)
+
+if ($env:CI -and $env:APPVEYOR) {
+    $env:APPVEYOR_BUILD_VERSION = $Version
+}
+
+return $Version
