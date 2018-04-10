@@ -1,7 +1,8 @@
 {
     "ModuleName": "OneDriveDsc",
-    "ModuleVersion":  "0.1",
+    "ModuleVersion":  "0.0.1",
     "ResourceName": "OneDrive",
+    "Description":  "PowerShell DSC Composite Resource for OneDrive",
     "Author":  "Raymond Piller",
     "CompanyName":  "Computing for Arts & Sciences, University of North Texas",
     "Copyright":  "(c) {0} University of North Texas. All rights reserved.",

@@ -6,7 +6,7 @@ param(
     ,
     [Parameter()]
     [string]
-    $Examples        = $(if ($env:PesterExamples) { $env:PesterExamples } else { '*' })
+    $Examples       = $(if ($env:PesterExamples) { $env:PesterExamples } else { '*' })
     ,
     [Parameter()]
     [string]
@@ -20,9 +20,18 @@ param(
 $ParentModulePath = "${env:ProgramFiles}\WindowsPowerShell\Modules\${thisModuleName}"
 $ResourceModulePath = "${ParentModulePath}\DSCResources\${thisModuleName}"
 $PSScriptRootParent = $(Split-Path $PSScriptRoot -Parent)
+$ManifestJsonFile  = "${PSScriptRootParent}\OneDrive\Manifest.json"
 
 
-$Manifest = & "${PSScriptRootParent}\.Build.ps1"
+# Pre POSH 6.0: ConvertFrom-Json -AsHashtable
+$Manifest = @{}
+$Manifest_obj = Get-Content $ManifestJsonFile | ConvertFrom-Json
+$Manifest_obj | Get-Member -MemberType Properties | ForEach-Object { $Manifest.Add($_.Name,$Manifest_obj.($_.Name)) }
+
+$Manifest.Copyright = $Manifest.Copyright -f [DateTime]::Now.Year
+
+# Remove-Module; if exists ...
+# Prevents issues in dev ...
 Remove-Module $thisModuleName -ErrorAction 'SilentlyContinue'
 
 function Invoke-PesterTestCleaup

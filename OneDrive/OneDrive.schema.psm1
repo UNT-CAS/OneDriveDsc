@@ -543,7 +543,7 @@ Configuration OneDrive
     if ($PSBoundParameters.Keys -contains 'DiskSpaceCheckThresholdMB')
     {
         Write-Verbose "[OneDrive] Processing *DiskSpaceCheckThresholdMB* ..."
-        if ($DiskSpaceCheckThresholdMB)
+        if ($DiskSpaceCheckThresholdMB.Count)
         {
             $i = 0
             foreach ($Threshold in $DiskSpaceCheckThresholdMB.GetEnumerator())
@@ -554,21 +554,21 @@ Configuration OneDrive
                     Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Name should be a GUID: $($Threshold.Name)"
                 }
 
-                if (-not ($Threshold.Value -as [int]))
+                if (-not (($Threshold.Value -as [int64]) -is [int64])) # `-is [int64]` catches `0` as valid.
                 {
-                    Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Value must be of type [int]: $($Threshold.Name): [$($Threshold.Value.GetType().FullName)] $($Threshold.Value)"
+                    Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Value must be of type [int64]: $($Threshold.Name): [$($Threshold.Value.GetType().FullName)] $($Threshold.Value)"
                 }
 
                 if (
-                    [int]$Threshold.Value -lt 0 -or
-                    [int]$Threshold.Value -gt 4294967295
+                    [int64]$Threshold.Value -lt 0 -or
+                    [int64]$Threshold.Value -gt 4294967295
                 ) {
                     Throw [System.Management.Automation.ParameterBindingException] "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Value Out of Range (0 to 4294967295 inclusive): $($Threshold.Name): $($Threshold.Value)"
                 }
 
-                if (($Threshold.Value -as [int]) -ne $Threshold.Value)
+                if (($Threshold.Value -as [int64]) -ne $Threshold.Value)
                 {
-                    Write-Warning "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Changed Value of '$($Threshold.Name)' from '[$($Threshold.Value.GetType().FullName)] $($Threshold.Value)' to '[$(($Threshold.Value -as [int]).GetType().FullName)] $(($Threshold.Value -as [int]))'"
+                    Write-Warning "[OneDrive] Policy_OneDrive_DiskSpaceCheckThresholdMB Changed Value of '$($Threshold.Name)' from '[$($Threshold.Value.GetType().FullName)] $($Threshold.Value)' to '[$(($Threshold.Value -as [int64]).GetType().FullName)] $(($Threshold.Value -as [int64]))'"
                 }
 
                 Write-Verbose "[OneDrive] *DiskSpaceCheckThresholdMBDiskSpaceCheckThresholdMB* Threshold: Creating 'Registry' Resource ..."
@@ -579,7 +579,7 @@ Configuration OneDrive
                     Key       = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\OneDrive\DiskSpaceCheckThresholdMB'
                     ValueName = $Threshold.Name
                     ValueType = 'String'
-                    ValueData = [int]$Threshold.Value
+                    ValueData = [int64]$Threshold.Value
                 }
             }
 

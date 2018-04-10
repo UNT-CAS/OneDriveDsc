@@ -1,6 +1,32 @@
 image: WMF 5
+
+# Skip on updates to the readme.
+# We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
+skip_commits:
+  message: /update(?:|d|s) readme\..*/
+
+environment:
+  PSGalleryApiKey:
+    secure: Xpt1sogACnm41S2/1LmhjIl1zn/s1u1dcwNdhLcUh8RA8eOSGaMGB8Ce8B5svBzg
+
+
+
 install:
 - ps: Install-PackageProvider -Name NuGet -MinimumVersion '2.8.5.201' -Force -Verbose
-- ps: Install-Module -Name Pester -SkipPublisherCheck -Force -Verbose; Import-Module -Name Pester -Verbose
+- ps: Install-Module -Name PSDepend -Verbose; Import-Module -Name PSDepend -Verbose
+- ps: Invoke-PSDepend '.\REQUIREMENTS.psd1' -Force -Verbose
+
+
+
 build_script:
+- ps: Invoke-psake '.\.build.ps1'
+
+
+
+test_script:
 - ps: Invoke-Pester -EnableExit
+
+
+
+deploy_script:
+- ps: Invoke-PSDeploy -Path '.\.deploy.ps1' -Force
