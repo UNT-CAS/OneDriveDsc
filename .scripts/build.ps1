@@ -1,35 +1,37 @@
 <#
-    .SYNOPSIS
+    .Synopsis
         Prepare this machine; *installing* this module in a location accessible by DSC.
 
-    .DESCRIPTION
+    .Description
         Uses [psake](https://github.com/psake/psake) to prepare this machine; *installing* this module in a location accessible by DSC.
 
         May do different tasks depending on the environment it's running in. Read the code for the details on that.
-    .EXAMPLE
+    .Example
         # Run this Build Script:
         
         Invoke-psake .\.build.ps1
-    .EXAMPLE
+    .Example
+        # Skip Bootstrap
+
+        Invoke-psake .\.build.ps1 -Parameters @{'SkipBootStrap'=$true}
+    .Example
         # Run this Build Script with different parameters/properties 'thisModuleName':
 
-        Invoke-psake .\.build.ps1 -Parameters @{"thisModuleName"='OtherModuleName'}
-    .EXAMPLE
+        Invoke-psake .\.build.ps1 -Parameters @{'thisModuleName'='OtherModuleName'}
+    .Example
         # Run this Build Script with a parameters/properties that's not otherwise defined:
         
-        Invoke-psake .\.build.ps1 -Parameters @{"Version"=[version]'1.2.3'}
+        Invoke-psake .\.build.ps1 -Parameters @{'Version'=[version]'1.2.3'}
 #>
 $ErrorActionPreference = 'Stop'
-# Set-StrictMode -Version 'latest'
 
-$script:thisModuleName = $null
-$script:ManifestJsonFile = $null
-$script:BuildOutput = $null
+$script:thisModuleName = 'OneDrive'
+$script:ManifestJsonFile = "${PSScriptRoot}\${thisModuleName}\Manifest.json"
+$script:BuildOutput = "${PSScriptRoot}\BuildOutput"
 
 $script:Manifest = @{}
-$script:Manifest.Add('ModuleName',  $null)
-$script:Manifest.Add('ResourceName',  $null)
-$script:Manifest.Add('Copyright',  $null)
+$Manifest_obj = Get-Content $script:ManifestJsonFile | ConvertFrom-Json
+$Manifest_obj | Get-Member -MemberType Properties | ForEach-Object { $script:Manifest.Set_Item($_.Name, $Manifest_obj.($_.Name)) }
 
 $script:Manifest_ModuleName = $null
 $script:Manifest_ResourceName = $null
@@ -39,15 +41,19 @@ $script:SystemModuleLocation = $null
 $script:DependsBootstrap = if ($Properties.Keys -contains 'SkipBootStrap' -and $Properties.SkipBootStrap) { $null } else { 'Bootstrap' }
 $script:VersionBuild = $null
 
+if (-not $env:CI) {
+    Get-Module $Manifest.ModuleName -ListAvailable -Refresh | Uninstall-Module -Force -ErrorAction 'SilentlyContinue'
+    (Get-Module $Manifest.ModuleName -ListAvailable -Refresh).ModuleBase | Remove-Item -Recurse -Force -ErrorAction 'SilentlyContinue'
+}
+
 # Parameters:
 Properties {
-    $script:thisModuleName = 'OneDrive'
-    $script:ManifestJsonFile = "${PSScriptRoot}\${script:thisModuleName}\Manifest.json"
-    $script:BuildOutput = "${PSScriptRoot}\BuildOutput"
+    $thisModuleName = $script:thisModuleName
+    $ManifestJsonFile = $script:ManifestJsonFile
+    $BuildOutput = $script:BuildOutput
 
     # Manipulate the Parameters for usage:
-    $Manifest_obj = Get-Content $script:ManifestJsonFile | ConvertFrom-Json
-    $Manifest_obj | Get-Member -MemberType Properties | ForEach-Object { $script:Manifest.Set_Item($_.Name, $Manifest_obj.($_.Name)) }
+    
     $script:Manifest.Copyright = $script:Manifest.Copyright -f [DateTime]::Now.Year
 
     $script:Manifest_ModuleName = $script:Manifest.ModuleName
@@ -61,8 +67,10 @@ Properties {
     $PSModulePath1 = $env:PSModulePath.Split(';')[1]
     $script:SystemModuleLocation = "${PSModulePath1}\${script:Manifest_ModuleName}"
 
-    $script:Version = [string](& "${PSScriptRoot}\version.ps1")
+    $script:Version = [string](& "${PSScriptRoot}\.scripts\version.ps1")
 }
+
+
 
 # Start psake builds
 Task default -Depends InstallModule

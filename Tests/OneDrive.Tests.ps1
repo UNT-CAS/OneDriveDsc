@@ -14,7 +14,7 @@ param(
     ,
     [Parameter()]
     [bool]
-    $CleanUp        = $true
+    $CleanUp        = $(if ($env:CI -eq 'true') { $false } else { $true })
 )
 
 $ParentModulePath = "${env:ProgramFiles}\WindowsPowerShell\Modules\${thisModuleName}"
@@ -30,6 +30,15 @@ $Manifest_obj | Get-Member -MemberType Properties | ForEach-Object { $Manifest.A
 
 $Manifest.Copyright = $Manifest.Copyright -f [DateTime]::Now.Year
 
+# Create Temp Dir; if needed.
+$New_Item = @{
+    ItemType = 'Directory'
+    Path     = "${PSScriptRootParent}\.temp"
+    Force    = $true
+}
+Write-Verbose "New-Item: $($New_Item | ConvertTo-Json -Compress)"
+New-Item @New_Item
+
 # Remove-Module; if exists ...
 # Prevents issues in dev ...
 Remove-Module $thisModuleName -ErrorAction 'SilentlyContinue'
@@ -38,7 +47,7 @@ function Invoke-PesterTestCleaup
 {
     Invoke-DscCleanup
 
-    Remove-Item -LiteralPath "${DSCModulePath}\${thisModuleName}" -Force
+    Remove-Item -LiteralPath "${DSCModulePath}\${thisModuleName}" -Force -ErrorAction 'SilentlyContinue'
     $env:PSModulePath = $script:PSModulePathORIG
 }
 
@@ -94,8 +103,12 @@ Describe $thisModuleName {
             (Get-DscResource $Manifest.ResourceName -ErrorAction 'SilentlyContinue').ResourceType | Should Be $Manifest.ResourceName
         }
 
-        It 'DscResource Version' {
-            (Get-DscResource $Manifest.ResourceName -ErrorAction 'SilentlyContinue').Version | Should Be $Manifest.ModuleVersion
+        It 'DscResource Version Major' {
+            (Get-DscResource $Manifest.ResourceName -ErrorAction 'SilentlyContinue').Version.Major | Should Be $(& "${PSScriptRootParent}\.scripts\version.ps1").Major
+        }
+
+        It 'DscResource Version Minor' {
+            (Get-DscResource $Manifest.ResourceName -ErrorAction 'SilentlyContinue').Version.Minor | Should Be $(& "${PSScriptRootParent}\.scripts\version.ps1").Minor
         }
     }
 
@@ -135,7 +148,7 @@ Describe $thisModuleName {
     }
 }
 
-if ($CleanUp.IsPresent)
+if ($CleanUp)
 {
     Invoke-PesterTestCleaup
 }

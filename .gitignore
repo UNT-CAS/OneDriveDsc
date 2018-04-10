@@ -1,5 +1,6 @@
-Demo_Configuration/
+.temp/
 BuildOutput/
+Demo_Configuration/
 
 OneDrive/*\.mof
 OneDrive/OneDrive\.psd1
