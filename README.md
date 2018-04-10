@@ -8,4 +8,6 @@ Can apply ~both~ computer ~and user~ policies with this resource.
 
 # Installation
 
-*Soon to be installable from PSGallery ...*
+```powershell
+Install-Module -Name 'OneDriveDsc'
+```
