@@ -8,13 +8,16 @@ skip_commits:
 environment:
   PSGalleryApiKey:
     secure: Xpt1sogACnm41S2/1LmhjIl1zn/s1u1dcwNdhLcUh8RA8eOSGaMGB8Ce8B5svBzg
+  CODECOV_TOKEN:
+    secure: FTZwENCnOORLZL4p1ijHk5KhOmbsfSgj/sxG4NVtv8SDH8A8qVBHlnCbluhZTTIm
 
 
 
 install:
 - ps: Install-PackageProvider -Name NuGet -MinimumVersion '2.8.5.201' -Force -Verbose
-- ps: Install-Module -Name PSDepend -Verbose; Import-Module -Name PSDepend -Verbose
+- ps: Install-Module -Name PSDepend -Force -Verbose; Import-Module -Name PSDepend -Verbose
 - ps: Invoke-PSDepend '.\REQUIREMENTS.psd1' -Force -Verbose
+- ps: (New-Object System.Net.WebClient).DownloadFile('https://github.com/codecov/codecov-exe/releases/download/1.0.3/Codecov.zipCod c', (Join-Path $env:Temp "Codecov.zip")); Expand-Archive "${env:Temp}\Codecov.zip" -DestinationPath $env:Temp
 
 
 
@@ -30,3 +33,4 @@ test_script:
 
 deploy_script:
 - ps: Invoke-PSDeploy -Path '.\.deploy.ps1' -Force
+- ps: '& "${env:Temp}\Codecov\codecov.exe" -f .\.codecov.yml'
