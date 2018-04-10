@@ -36,7 +36,7 @@ $script:Manifest_ResourceName = $null
 $script:ParentModulePath = $null
 $script:ResourceModulePath = $null
 $script:SystemModuleLocation = $null
-$script:DependsBootstrap = if ($Properties.SkipBootStrap) { $null } else { 'Bootstrap' }
+$script:DependsBootstrap = if ($Properties.Keys -contains 'SkipBootStrap' -and $Properties.SkipBootStrap) { $null } else { 'Bootstrap' }
 $script:VersionBuild = $null
 
 # Parameters:
