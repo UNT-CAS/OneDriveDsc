@@ -20,7 +20,7 @@ install:
 - ps: |
     Install-PackageProvider -Name NuGet -MinimumVersion '2.8.5.201' -Force -Verbose
     Install-Module -Name PSDepend -Force -Verbose; Import-Module -Name PSDepend -Verbose
-    Invoke-PSDepend '.\REQUIREMENTS.psd1'
+    Invoke-PSDepend '.\REQUIREMENTS.psd1' -Force
 
 
 
