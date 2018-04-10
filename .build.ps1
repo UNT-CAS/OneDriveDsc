@@ -9,18 +9,18 @@
     .EXAMPLE
         # Run this Build Script:
         
-        Invoke-psake .\.Build.ps1
+        Invoke-psake .\.build.ps1
     .EXAMPLE
         # Run this Build Script with different parameters/properties 'thisModuleName':
 
-        Invoke-psake .\.Build.ps1 -Parameters @{"thisModuleName"='OtherModuleName'}
+        Invoke-psake .\.build.ps1 -Parameters @{"thisModuleName"='OtherModuleName'}
     .EXAMPLE
         # Run this Build Script with a parameters/properties that's not otherwise defined:
         
-        Invoke-psake .\.Build.ps1 -Parameters @{"Version"=[version]'1.2.3'}
+        Invoke-psake .\.build.ps1 -Parameters @{"Version"=[version]'1.2.3'}
 #>
 $ErrorActionPreference = 'Stop'
-Set-StrictMode -Version 'latest'
+# Set-StrictMode -Version 'latest'
 
 $script:thisModuleName = $null
 $script:ManifestJsonFile = $null
@@ -61,7 +61,7 @@ Properties {
     $PSModulePath1 = $env:PSModulePath.Split(';')[1]
     $script:SystemModuleLocation = "${PSModulePath1}\${script:Manifest_ModuleName}"
 
-    $script:VersionBuild = if ($env:APPVEYOR_BUILD_NUMBER) { $env:APPVEYOR_BUILD_NUMBER } else { 0 }
+    $script:Version = [string](& "${PSScriptRoot}\version.ps1")
 }
 
 # Start psake builds
@@ -101,7 +101,7 @@ Task SetupModule -Description "Prepare and Setup Module" -Depends $DependsBootst
 
     $script:Manifest.Path = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psd1"
     $script:Manifest.DscResourcesToExport = $script:Manifest_ResourceName
-    $script:Manifest.ModuleVersion = "$($script:Manifest.ModuleVersion).${script:VersionBuild}"
+    $script:Manifest.ModuleVersion = $script:Version
     New-ModuleManifest @script:Manifest
 
     $script:Manifest.Path = "${script:ResourceModulePath}\${script:Manifest_ResourceName}.psd1"

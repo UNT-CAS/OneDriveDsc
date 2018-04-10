@@ -1,5 +1,7 @@
 image: WMF 5
 
+version: 0.1.{build}
+
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
 skip_commits:
@@ -14,12 +16,11 @@ environment:
 
 
 install:
-- ps: Install-PackageProvider -Name NuGet -MinimumVersion '2.8.5.201' -Force -Verbose
-- ps: Install-Module -Name PSDepend -Force -Verbose; Import-Module -Name PSDepend -Verbose
-- ps: Invoke-PSDepend '.\REQUIREMENTS.psd1' -Force -Verbose
-- ps: '[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12'
-- ps: (New-Object System.Net.WebClient).DownloadFile('https://github.com/codecov/codecov-exe/releases/download/1.0.3/Codecov.zip', (Join-Path $env:Temp "Codecov.zip"))
-- ps: Expand-Archive "${env:Temp}\Codecov.zip" -DestinationPath $env:Temp
+# Bootstrap PSDepend and Install Dependencies
+- ps: |
+    Install-PackageProvider -Name NuGet -MinimumVersion '2.8.5.201' -Force -Verbose
+    Install-Module -Name PSDepend -Force -Verbose; Import-Module -Name PSDepend -Verbose
+    Invoke-PSDepend '.\REQUIREMENTS.psd1' -Force -Verbose
 
 
 
@@ -29,10 +30,33 @@ build_script:
 
 
 test_script:
-- ps: Invoke-Pester -EnableExit
+  # Run tests, upload test results and generate coverage report
+- ps: |
+    Import-Module ${env:Temp}\CodeCovIo.psm1
+    $Invoke_Pester = @{
+        OutputFormat            = 'NUnitXml'
+        OutputFile              = '.\TestsResults.xml'
+        PassThru                = $true
+        CodeCoverage            = 'nvm.psm1'
+        CodeCoverageOutputFile  = 'coverage.xml'
+    }
+    $res = Invoke-Pester @Invoke_Pester
+    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Resolve-Path $Invoke_Pester.OutputFile))
+    Export-CodeCovIoJson -CodeCoverage $res.CodeCoverage -RepoRoot $pwd -Path coverage.json
+    if ($res.FailedCount -gt 0)
+    {
+      Throw "$($res.FailedCount) tests failed."
+    }
+
+
+
+after_test:
+  # Upload coverage report to Codecov.io
+  - ps: |
+      & "${env:Temp}\Codecov\codecov.exe" -f .\coverage.json
 
 
 
 deploy_script:
-- ps: if ($env:APPVEYOR_REPO_TAG -eq 'true') { Invoke-PSDeploy -Path '.\.deploy.ps1' -Force }
-- ps: '& "${env:Temp}\Codecov\codecov.exe" -f .\.codecov.yml'
+- ps: |
+    if ($env:APPVEYOR_REPO_TAG -eq 'true') { Invoke-PSDeploy -Path '.\.deploy.ps1' -Force }
