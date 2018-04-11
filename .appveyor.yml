@@ -25,7 +25,7 @@ install:
 
 
 build_script:
-- ps: Invoke-psake '.\.scripts\build.ps1' -Parameters @{'SkipBootStrap' = $true}
+- ps: Invoke-psake '.\.scripts\build.ps1' -Properties @{'SkipBootStrap' = $true}
 
 
 

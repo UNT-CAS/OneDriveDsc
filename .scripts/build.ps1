@@ -13,17 +13,19 @@
     .Example
         # Skip Bootstrap
 
-        Invoke-psake .\.build.ps1 -Parameters @{'SkipBootStrap'=$true}
+        Invoke-psake .\.build.ps1 -Properties @{'SkipBootstrap'=$true}
     .Example
         # Run this Build Script with different parameters/properties 'thisModuleName':
 
-        Invoke-psake .\.build.ps1 -Parameters @{'thisModuleName'='OtherModuleName'}
+        Invoke-psake .\.build.ps1 -Properties @{'thisModuleName'='OtherModuleName'}
     .Example
         # Run this Build Script with a parameters/properties that's not otherwise defined:
         
-        Invoke-psake .\.build.ps1 -Parameters @{'Version'=[version]'1.2.3'}
+        Invoke-psake .\.build.ps1 -Properties @{'Version'=[version]'1.2.3'}
 #>
 $ErrorActionPreference = 'Stop'
+
+
 
 $script:thisModuleName = 'OneDrive'
 $script:PSScriptRootParent = Split-Path $PSScriptRoot -Parent
@@ -39,13 +41,18 @@ $script:Manifest_ResourceName = $null
 $script:ParentModulePath = $null
 $script:ResourceModulePath = $null
 $script:SystemModuleLocation = $null
-$script:DependsBootstrap = if ($Properties.Keys -contains 'SkipBootStrap' -and $Properties.SkipBootStrap) { $null } else { 'Bootstrap' }
+$script:DependsBootstrap = if ($Properties.Keys -contains 'SkipBootstrap' -and $Properties.SkipBootstrap) { $null } else { 'Bootstrap' }
 $script:VersionBuild = $null
 
 if (-not $env:CI) {
     Get-Module $Manifest.ModuleName -ListAvailable -Refresh | Uninstall-Module -Force -ErrorAction 'SilentlyContinue'
     (Get-Module $Manifest.ModuleName -ListAvailable -Refresh).ModuleBase | Remove-Item -Recurse -Force -ErrorAction 'SilentlyContinue'
 }
+
+Write-Verbose "[BUILD] Properties Keys: $($Properties.Keys -join ', ')" -Verbose
+Write-Verbose "[BUILD] Properties.SkipBootstrap: $($Properties.SkipBootstrap)" -Verbose
+Write-Verbose "[BUILD] DependsBootstrap: ${script:DependsBootstrap}" -Verbose
+
 
 # Parameters:
 Properties {
@@ -103,7 +110,9 @@ Task Bootstrap -Description "Bootstrap & Run PSDepend" {
     Write-Verbose "[BUILD Bootstrap] PSDepend: $($PSDepend.Version)"
 
     Write-Verbose "[BUILD Bootstrap] PSDepend: Invoking '${PSScriptRootParent}\REQUIREMENTS.psd1'"
+    Push-Location $PSScriptRootParent
     Invoke-PSDepend -Path "${PSScriptRootParent}\REQUIREMENTS.psd1" -Force
+    Pop-Location
 }
 
 
