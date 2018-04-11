@@ -2,9 +2,11 @@
     Deployed with PSDeploy
         - https://github.com/RamblingCookieMonster/PSDeploy
 #>
+$PSScriptRootParent = Split-Path $PSScriptRoot -Parent
+
 Deploy Module {
-    By PSGalleryModule $env:APPVEYOR_PROJECT_NAME {
-        FromSource "${PSScriptRoot}\BuildOutput\${env:APPVEYOR_PROJECT_NAME}"
+    By PSGalleryModule OneDriveDsc {
+        FromSource "${PSScriptRootParent}\BuildOutput\OneDriveDsc"
         To PSGallery
         # Tagged Testing
         WithOptions @{
