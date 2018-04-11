@@ -63,8 +63,5 @@ after_test:
 deploy_script:
 # If build was started by pushed tag; deploy it.
 - ps: |
-    Write-Verbose "[AppVeyor] APPVEYOR_REPO_TAG: ${env:APPVEYOR_REPO_TAG}"
-    if ($env:APPVEYOR_REPO_TAG -eq 'true')
-    {
-        Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force
-    }
+    Write-Host "[AppVeyor] APPVEYOR_REPO_TAG: ${env:APPVEYOR_REPO_TAG}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
+    if ($env:APPVEYOR_REPO_TAG -eq 'true') { Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force }

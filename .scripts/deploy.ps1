@@ -3,8 +3,9 @@
         - https://github.com/RamblingCookieMonster/PSDeploy
 #>
 $PSScriptRootParent = Split-Path $PSScriptRoot -Parent
-Write-Verbose "[Deploy] PSScriptRootParent: ${PSScriptRootParent}"
-Write-Verbose "[Deploy] APPVEYOR_PROJECT_NAME: ${env:APPVEYOR_PROJECT_NAME}"
+Write-Host "[Deploy] PSScriptRootParent: ${PSScriptRootParent}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
+Write-Host "[Deploy] APPVEYOR_PROJECT_NAME: ${env:APPVEYOR_PROJECT_NAME}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
+Write-Host "[Deploy] Fooooo: ${env:PSGalleryApiKey}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
 
 Deploy Module {
     By PSGalleryModule OneDriveDsc {
