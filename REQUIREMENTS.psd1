@@ -16,7 +16,7 @@
     'PSScriptAnalyzer'  = 'latest'  # Tested with: 1.11.0
     'CodeCovIo.psm1' = @{
         DependencyType = 'FileDownload'
-        Source = 'https://raw.githubusercontent.com/PowerShell/DscResource.Tests/491688867dc53894b92ca53520a18d145deb7760/DscResource.CodeCoverage/CodeCovIo.psm1'
+        Source = 'https://raw.githubusercontent.com/aaronpowell/ps-nvm/bf4ca1953b250c11887a36464de566794947afb1/.scripts/CodeCovIo.psm1'
         Target = '$PWD\.temp\CodeCovIo.psm1'
         DependsOn = @('Prep')
     }

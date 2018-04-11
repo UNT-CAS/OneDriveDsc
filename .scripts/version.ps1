@@ -39,7 +39,6 @@ param(
     $Build = $(if ($env:APPVEYOR_BUILD_NUMBER) { $env:APPVEYOR_BUILD_NUMBER } else { 0 })
 )
 $ErrorActionPreference = 'Stop'
-Set-StrictMode -Version 'latest'
 
 
 $Version = [version]('{0}.{1}.{2}' -f $Major, $Minor, $Build)

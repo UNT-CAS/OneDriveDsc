@@ -85,16 +85,24 @@ Task default -Depends InstallModule
     Install Dependencies
 #>
 Task Bootstrap -Description "Bootstrap & Run PSDepend" {
+    $PSDepend = Get-Module -Name 'PSDepend'
+    Write-Verbose "[BUILD Bootstrap] PSDepend: $($PSDepend.Version)"
     if (Get-Module -Name 'PSDepend')
     {
-        Update-Module -Name 'PSDepend' -Force
+        Write-Verbose "[BUILD Bootstrap] PSDepend: Updating..."
+        $PSDepend | Update-Module -Force
     }
     else
     {
+        Write-Verbose "[BUILD Bootstrap] PSDepend: Installing..."
         Install-Module -Name 'PSDepend' -Force
     }
 
-    Import-Module -Name 'PSDepend'
+    Write-Verbose "[BUILD Bootstrap] PSDepend: Installing..."
+    $PSDepend = Import-Module -Name 'PSDepend' -PassThru
+    Write-Verbose "[BUILD Bootstrap] PSDepend: $($PSDepend.Version)"
+
+    Write-Verbose "[BUILD Bootstrap] PSDepend: Invoking '${PSScriptRootParent}\REQUIREMENTS.psd1'"
     Invoke-PSDepend -Path "${PSScriptRootParent}\REQUIREMENTS.psd1" -Force
 }
 
@@ -107,18 +115,27 @@ Task Bootstrap -Description "Bootstrap & Run PSDepend" {
         - Establish Module/Resource Locations/Paths.
 #>
 Task SetupModule -Description "Prepare and Setup Module" -Depends $DependsBootstrap {
-    New-Item -ItemType 'Directory' -Path $script:ResourceModulePath -Force | Out-Null
+    $dir = New-Item -ItemType 'Directory' -Path $script:ResourceModulePath -Force
+    Write-Verbose "[BUILD SetupModule] New Directory: ${dir}"
 
     $script:Manifest.Path = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psd1"
     $script:Manifest.DscResourcesToExport = $script:Manifest_ResourceName
     $script:Manifest.ModuleVersion = $script:Version
+    Write-Verbose "[BUILD SetupModule] New-ModuleManifest: $($script:Manifest | ConvertTo-Json -Compress)"
     New-ModuleManifest @script:Manifest
 
     $script:Manifest.Path = "${script:ResourceModulePath}\${script:Manifest_ResourceName}.psd1"
     $script:Manifest.RootModule = "${script:Manifest_ResourceName}.schema.psm1"
+    Write-Verbose "[BUILD SetupModule] New-ModuleManifest: $($script:Manifest | ConvertTo-Json -Compress)"
     New-ModuleManifest @script:Manifest
 
-    Copy-Item -LiteralPath "${PSScriptRootParent}\${script:thisModuleName}\${script:thisModuleName}.schema.psm1" -Destination $script:ResourceModulePath -Force
+    $Copy_Item = @{
+        LiteralPath = "${PSScriptRootParent}\${script:thisModuleName}\${script:thisModuleName}.schema.psm1"
+        Destination = $script:ResourceModulePath
+        Force       = $true
+    }
+    Write-Verbose "[BUILD SetupModule] Copy-Item: $($Copy_Item | ConvertTo-Json -Compress)"
+    Copy-Item @Copy_Item
 }
 
 
@@ -130,7 +147,20 @@ Task SetupModule -Description "Prepare and Setup Module" -Depends $DependsBootst
         - Copy Module to System Location; for testing.
 #>
 Task InstallModule -Description "Prepare and Setup/Install Module" -Depends SetupModule {
-    New-Item -ItemType 'Directory' -Path $script:SystemModuleLocation -Force | Out-Null
+    $New_Item = @{
+        ItemType = 'Directory'
+        Path     = $script:SystemModuleLocation
+        Force    = $true
+    }
+    Write-Verbose "[BUILD SetupModule] New-Item: $($New_Item | ConvertTo-Json -Compress)"
+    New-Item @New_Item | Out-Null
 
-    Copy-Item -Path "${script:BuildOutput}\*" -Destination $script:SystemModuleLocation -Recurse -Force
+    $Copy_Item = @{
+        Path        = "${script:BuildOutput}\*"
+        Destination = $script:SystemModuleLocation
+        Recurse     = $true
+        Force       = $true
+    }
+    Write-Verbose "[BUILD SetupModule] Copy-Item: $($Copy_Item | ConvertTo-Json -Compress)"
+    Copy-Item @Copy_Item
 }

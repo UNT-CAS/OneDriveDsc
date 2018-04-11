@@ -5,7 +5,6 @@
         PSDepend can't run complex tasks, and currently can't extract a FileDownload that's a ZIP file.
 #>
 $ErrorActionPreference = 'Stop'
-Set-StrictMode -Version 'latest'
 
 $PSScriptRootParent = Split-Path $PSScriptRoot -Parent
 

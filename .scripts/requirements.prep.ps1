@@ -5,7 +5,8 @@
         PSDepend can't run complex tasks, and currently can't extract a FileDownload that's a ZIP file.
 #>
 $ErrorActionPreference = 'Stop'
-Set-StrictMode -Version 'latest'
+
+$PSScriptRootParent = Split-Path $PSScriptRoot -Parent
 
 
 
@@ -27,7 +28,7 @@ Write-Verbose "[REQUIREMENTS Prep] APPVEYOR_BUILD_VERSION NEW: ${env:APPVEYOR_BU
 # Create Temp Directory
 $New_Item = @{
     ItemType = 'Directory'
-    Path     = "$(Split-Path $PSScriptRoot -Parent)\.temp"
+    Path     = "${$PSScriptRootParent}\.temp"
     Force    = $true
 }
 Write-Verbose "[REQUIREMENTS Prep] New-Item: $($New_Item | ConvertTo-Json -Compress)"
