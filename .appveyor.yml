@@ -33,7 +33,7 @@ test_script:
   # Run tests, upload test results and generate coverage report
 - ps: |
     Import-Module ${env:Temp}\CodeCovIo.psm1
-    
+
     $Invoke_Pester = @{
         OutputFormat            = 'NUnitXml'
         OutputFile              = '.\.temp\TestsResults.xml'
@@ -45,7 +45,7 @@ test_script:
     
     (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Resolve-Path $Invoke_Pester.OutputFile))
     Export-CodeCovIoJson -CodeCoverage $res.CodeCoverage -RepoRoot $pwd -Path CodeCoverage.json
-    
+
     if ($res.FailedCount -gt 0)
     {
       Throw "$($res.FailedCount) tests failed."
@@ -63,6 +63,7 @@ after_test:
 deploy_script:
 # If build was started by pushed tag; deploy it.
 - ps: |
+    Write-Verbose "[AppVeyor] APPVEYOR_REPO_TAG: ${env:APPVEYOR_REPO_TAG}"
     if ($env:APPVEYOR_REPO_TAG -eq 'true')
     {
         Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force
