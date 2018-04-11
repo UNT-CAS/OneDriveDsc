@@ -1,6 +1,6 @@
 {
     "ModuleName": "OneDriveDsc",
-    "ModuleVersion":  "0.1",
+    "ModuleVersion":  "Taken From '.appveyor.yml` + AppVeyor Build Number; done in the `.scripts\\version.ps1` file.",
     "ResourceName": "OneDrive",
     "Description":  "PowerShell DSC Composite Resource for OneDrive",
     "Author":  "Raymond Piller",

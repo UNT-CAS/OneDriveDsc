@@ -1,0 +1,67 @@
+image: WMF 5
+
+version: 0.1.{build}
+
+# Skip on updates to the readme.
+# We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
+skip_commits:
+  message: /update(?:|d|s) readme\..*/
+
+environment:
+  PSGalleryApiKey:
+    secure: Xpt1sogACnm41S2/1LmhjIl1zn/s1u1dcwNdhLcUh8RA8eOSGaMGB8Ce8B5svBzg
+  CODECOV_TOKEN:
+    secure: FTZwENCnOORLZL4p1ijHk5KhOmbsfSgj/sxG4NVtv8SDH8A8qVBHlnCbluhZTTIm
+
+
+
+install:
+# Bootstrap PSDepend and Install Dependencies
+- ps: |
+    Install-PackageProvider -Name NuGet -MinimumVersion '2.8.5.201' -Force -Verbose
+    Install-Module -Name PSDepend -Force -Verbose; Import-Module -Name PSDepend -Verbose
+    Invoke-PSDepend '.\REQUIREMENTS.psd1' -Force -Verbose
+
+
+
+build_script:
+- ps: Invoke-psake '.\.scripts\build.ps1' -Properties @{'SkipBootStrap' = $true}
+
+
+
+test_script:
+  # Run tests, upload test results and generate coverage report
+- ps: |
+    Import-Module ${env:Temp}\CodeCovIo.psm1
+
+    $Invoke_Pester = @{
+        OutputFormat            = 'NUnitXml'
+        OutputFile              = '.\.temp\TestsResults.xml'
+        PassThru                = $true
+        CodeCoverage            = '.\OneDrive\OneDrive.schema.psm1'
+        CodeCoverageOutputFile  = '.\.temp\CodeCoverage.xml'
+    }
+    $res = Invoke-Pester @Invoke_Pester
+    
+    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Resolve-Path $Invoke_Pester.OutputFile))
+    Export-CodeCovIoJson -CodeCoverage $res.CodeCoverage -RepoRoot $pwd -Path CodeCoverage.json
+
+    if ($res.FailedCount -gt 0)
+    {
+      Throw "$($res.FailedCount) tests failed."
+    }
+
+
+
+after_test:
+# Upload coverage report to Codecov.io
+- ps: |
+    & "${env:Temp}\Codecov\codecov.exe" -f .\CodeCoverage.json
+
+
+
+deploy_script:
+# If build was started by pushed tag; deploy it.
+- ps: |
+    Write-Host "[AppVeyor] APPVEYOR_REPO_TAG: ${env:APPVEYOR_REPO_TAG}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
+    if ($env:APPVEYOR_REPO_TAG -eq 'true') { Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force }
