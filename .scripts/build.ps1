@@ -26,8 +26,9 @@
 $ErrorActionPreference = 'Stop'
 
 $script:thisModuleName = 'OneDrive'
-$script:ManifestJsonFile = "${PSScriptRoot}\${thisModuleName}\Manifest.json"
-$script:BuildOutput = "${PSScriptRoot}\BuildOutput"
+$script:PSScriptRootParent = Split-Path $PSScriptRoot -Parent
+$script:ManifestJsonFile = "${PSScriptRootParent}\${thisModuleName}\Manifest.json"
+$script:BuildOutput = "${PSScriptRootParent}\BuildOutput"
 
 $script:Manifest = @{}
 $Manifest_obj = Get-Content $script:ManifestJsonFile | ConvertFrom-Json
@@ -49,6 +50,7 @@ if (-not $env:CI) {
 # Parameters:
 Properties {
     $thisModuleName = $script:thisModuleName
+    $PSScriptRootParent = $script:PSScriptRootParent
     $ManifestJsonFile = $script:ManifestJsonFile
     $BuildOutput = $script:BuildOutput
 
@@ -67,7 +69,7 @@ Properties {
     $PSModulePath1 = $env:PSModulePath.Split(';')[1]
     $script:SystemModuleLocation = "${PSModulePath1}\${script:Manifest_ModuleName}"
 
-    $script:Version = [string](& "${PSScriptRoot}\.scripts\version.ps1")
+    $script:Version = [string](& "${PSScriptRootParent}\.scripts\version.ps1")
 }
 
 
@@ -93,7 +95,7 @@ Task Bootstrap -Description "Bootstrap & Run PSDepend" {
     }
 
     Import-Module -Name 'PSDepend'
-    Invoke-PSDepend -Path "${PSScriptRoot}\REQUIREMENTS.psd1" -Force
+    Invoke-PSDepend -Path "${PSScriptRootParent}\REQUIREMENTS.psd1" -Force
 }
 
 
@@ -116,7 +118,7 @@ Task SetupModule -Description "Prepare and Setup Module" -Depends $DependsBootst
     $script:Manifest.RootModule = "${script:Manifest_ResourceName}.schema.psm1"
     New-ModuleManifest @script:Manifest
 
-    Copy-Item -LiteralPath "${PSScriptRoot}\${script:thisModuleName}\${script:thisModuleName}.schema.psm1" -Destination $script:ResourceModulePath -Force
+    Copy-Item -LiteralPath "${PSScriptRootParent}\${script:thisModuleName}\${script:thisModuleName}.schema.psm1" -Destination $script:ResourceModulePath -Force
 }
 
 
