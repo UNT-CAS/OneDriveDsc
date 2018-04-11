@@ -28,7 +28,7 @@ Write-Verbose "[REQUIREMENTS Prep] APPVEYOR_BUILD_VERSION NEW: ${env:APPVEYOR_BU
 # Create Temp Directory
 $New_Item = @{
     ItemType = 'Directory'
-    Path     = "${$PSScriptRootParent}\.temp"
+    Path     = "${PSScriptRootParent}\.temp"
     Force    = $true
 }
 Write-Verbose "[REQUIREMENTS Prep] New-Item: $($New_Item | ConvertTo-Json -Compress)"
